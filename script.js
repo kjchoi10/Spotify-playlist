@@ -11,7 +11,7 @@ app.events = function () {
 		let search = artists.map(artistName => app.searchArtist(artistName));
 		
 		app.retreiveArtistInfo(search);
-	});
+		});
 };
 
 //Go to Spotify and get the artists.
@@ -28,11 +28,11 @@ app.searchArtist = (artistName) => $.ajax({
 
 //With the ids we want to get albums
 app.getArtistAlbums = (artistId) => $.ajax({
-	url: 'https://api.spotify.com/v1/artists/${artistId}/albums',
+	url: 'https://api.spotify.com/v1/artists/' + artistId +  '/albums',
 	method: 'GET',
 	dataType: 'json',
 	data: {
-		album_type: 'album'
+		album_type: 'album',
 	}
 });
 
@@ -45,9 +45,10 @@ app.getArtistTracks = function() {
 app.retreiveArtistInfo = function(search) {
 	$.when(...search) // ... is the spread operator takes an array and spreads them out as if spassing in one of a time don't need to know lenght
 		.then((...results) => { // gathers all the data collected
-			results = results.map(res => res[0].artists.items[0].id) // gets album id
+			results = results.map(getFirstElement)
+				.map(res => res.artists.items[0].id) // gets album id
 			 	.map(id => app.getArtistAlbums(id));
-				
+
 				app.retreiveArtistTracks(results);
 	});
 };
@@ -55,12 +56,17 @@ app.retreiveArtistInfo = function(search) {
 app.retreiveArtistTracks = function(artistAlbums) {
 	$.when(...artistAlbums)
 		.then((...albums) => {
+			albums = albums.map(getFirstElement);
+				.map(res => res.items)
+				.reduce((prev, curr) => [...prev, ...curr], [])
 			console.log(albums);
 		});
 };
 
+// gets the first item in the array to retrieveArtist Info
+const getFirstElement = {item} => item[0];
 
-//THen build playlist
+//Then build playlist
 
 app.init = function() {
 	app.events();
