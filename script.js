@@ -8,11 +8,19 @@ app.events = function () {
 		e.preventDefault();
 		$('.loader').toggleClass('show');
 		let artists = $('input[type=search]').val();
-		artists = artists.split(',');
-		let search = artists.map(artistName => app.searchArtist(artistName));
 
-		app.retreiveArtistInfo(search);
-		});
+		// worked on this during 1:1 session
+		let artistIndex = artists.indexOf(','); // indexOf returns either 1 or -1
+
+		if(artistIndex === -1) {
+			alert('You must have at least two artists.');
+			$('.loader').toggle('.hide');
+		} else {
+			artists = artists.split(',');
+			let search = artists.map(artistName => app.searchArtist(artistName));
+			app.retreiveArtistInfo(search);
+		}
+	});
 };
 
 //Go to Spotify and get the artists.
@@ -61,7 +69,7 @@ app.buildPlayList = function(tracks) {
 			+ randomTracks.join();
 
 			$('.loader').toggleClass('show');
-			
+
 			$('.playlist').html('<iframe src="' + baseUrl + '"height="400"' + '></iframe>' );
 			console.log(randomTracks);
 		});
