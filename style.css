@@ -68,6 +68,11 @@ section,
 	box-shadow: inset 1px 1px 1px rgba(0,0,0,0.2);
 }
 
+.main-icon {
+	display: flex;
+	margin-bottom: 50px;
+}
+
 .loader {
 	display: none;
 }

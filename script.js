@@ -67,6 +67,7 @@ app.buildPlayList = function(tracks) {
 			}
 			const baseUrl = 'https://embed.spotify.com/?theme=white&uri=spotify:trackset:My Playlist:'
 			+ randomTracks.join();
+			console.log(baseUrl);
 
 			$('.loader').toggleClass('show');
 
@@ -110,6 +111,10 @@ const getRandomTrack = (trackArray) => {
 	return trackArray[randoNum];
 };
 
+// build popular playlist rack
+const getPopularTrack = (trackArray) => {
+	const popular = 0;
+};
 //Then build playlist
 
 app.init = function() {
