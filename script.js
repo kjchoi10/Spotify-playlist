@@ -1,3 +1,24 @@
+// Firebase database
+var config = {
+	apiKey: "AIzaSyAMLEBscqVljeKS-OQpWfmPzKaTrcu71oE",
+	authDomain: "spotify-playlist-2850a.firebaseapp.com",
+	databaseURL: "https://spotify-playlist-2850a.firebaseio.com/",
+	storageBucket: "spotify-playlist-2850a.appspot.com",
+};
+firebase.initializeApp(config);
+let database = firebase.database();
+
+//Connect with Firebase database
+$('form').on('submit', function(e) {
+	e.preventDefault();
+	let userInput = $('input[type=search]').val();
+	console.log(userInput);
+	let artistSearch = database.ref('artists');
+	artistSearch.push({
+		artist: userInput
+	});
+});
+
 const app = {};
 
 app.apiUrl = 'https://api.spotify.com/v1';
@@ -18,7 +39,7 @@ app.events = function () {
 		} else {
 			artists = artists.split(',');
 			let search = artists.map(artistName => app.searchArtist(artistName));
-			app.retreiveArtistInfo(search);
+			app.retrieveArtistInfo(search);
 		}
 	});
 };
@@ -67,27 +88,25 @@ app.buildPlayList = function(tracks) {
 			}
 			const baseUrl = 'https://embed.spotify.com/?theme=white&uri=spotify:trackset:My Playlist:'
 			+ randomTracks.join();
-			console.log(baseUrl);
 
 			$('.loader').toggleClass('show');
 
 			$('.playlist').html('<iframe src="' + baseUrl + '"height="400"' + '></iframe>' );
-			console.log(randomTracks);
 		});
 };
 
-app.retreiveArtistInfo = function(search) {
+app.retrieveArtistInfo = function(search) {
 	$.when(...search) // ... is the spread operator takes an array and spreads them out as if spassing in one of a time don't need to know lenght
 		.then((...results) => { // gathers all the data collected
 			results = results.map(getFirstElement)
 				.map(res => res.artists.items[0].id) // gets album id
 			 	.map(id => app.getArtistAlbums(id));
 
-			app.retreiveArtistTracks(results);
+			app.retrieveArtistTracks(results);
 	});
 };
 
-app.retreiveArtistTracks = function(artistAlbums) {
+app.retrieveArtistTracks = function(artistAlbums) {
 	$.when(...artistAlbums)
 		.then((...albums) => {
 			albumIds = albums.map(getFirstElement)
