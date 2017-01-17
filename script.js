@@ -81,11 +81,40 @@ app.buildPlayList = function(tracks) {
 			tracksResults = tracksResults.map(getFirstElement)
 			  .map(item => item.items)
 				.reduce(flatten, [])
-				.map(item => item.id);
-			const randomTracks = [];
-			for(let i = 0; i < 30; i++){
-				randomTracks.push(getRandomTrack(tracksResults));
+				.map(item => [item.name, item.id]);
+
+			// Make a hashtable of track name and id
+			// 1. I need to give names for the keys and values
+			const artistObj = {};
+			const tracks = [];
+			for(let i = 0; i < tracksResults.length; i++){
+				artistObj[tracksResults[i][1]] = tracksResults[i][0];
+				tracks.push(tracksResults[i][1]);
 			}
+			// console.log(artistObj);
+			// console.log(tracks);
+			const randomTracks = [];
+
+			// gets the random tracks using ids
+			for(let j = 0; j < 30; j++){
+				randomTracks.push(getRandomTrack(tracks));
+			}
+
+			const randomTrackName = [];
+
+			// finds the random song anems
+			for(let z = 0; z < randomTracks.length; z++){
+				randomTrackName.push(artistObj[randomTracks[z]]);
+			}
+
+			console.log(randomTrackName);
+
+			// add random track name into firebase
+			let trackName = database.ref('songs');
+			trackName.push({
+				songs: randomTrackName
+			});
+
 			const baseUrl = 'https://embed.spotify.com/?theme=white&uri=spotify:trackset:My Playlist:'
 			+ randomTracks.join();
 
